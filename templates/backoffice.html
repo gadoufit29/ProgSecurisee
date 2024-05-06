@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='style.css') }}"
+        />
+        <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='assets/logo.png') }}">
+        <title>Silkroad</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    </head>
+    <body>
+        {% include "navbar.html" %}
+
+        {% if current_user.admin != 1: %}
+            <script>window.location='/'</script>
+        {% endif %}
+
+        <div class="container mt-5">
+            <h2 class="mb-4">Liste des Produits</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom du Produit</th>
+                        <th>Prix</th>
+                        <th>Catégorie</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products: %}
+                        <tr>
+                            <td>{{ product.id }}</td>
+                            <td>{{ product.name }}</td>
+                            <td>${{ product.price }}</td>
+                            <td>{{CATEGORIES_DICT.get(product.category_id)}}</td>
+                            <td>
+                                <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editModal-{{ product.id }}">Modifier</button>
+                                <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal-{{ product.id }}">Supprimer</button>
+                            </td>
+                        </tr>
+                        <!-- Modals pour Modifier et Supprimer -->
+                        <div class="modal fade" id="editModal-{{ product.id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <!-- Contenu du formulaire de modification -->
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="deleteModalLabel">Modification du produit</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="/modify_product/{{ product.id }}" method="post" enctype="multipart/form-data">
+                                            <label for="name">Nom</label>
+                                            <input type="text" class="form-control" id="name" name="name" value="{{ product.name }}">
+                                            <label for="description">Description</label>
+                                            <input type="text" class="form-control" id="description" name="description" value="{{ product.description }}">
+                                            <label for="qte">Quantité</label>
+                                            <input type="number" class="form-control" id="qte" name="qte" value="{{ product.qte }}" step="1">
+                                            <label for="price">Prix</label>
+                                            <input type="number" class="form-control" id="price" name="price" value="{{ product.price }}" step=".01">
+                                            <label for="category">Catégorie</label><br>
+                                            <select class="custom-select mr-sm-2" id="inlineFormCustomSelect" name="category">                                            
+                                                {% for category in CATEGORIES: %}
+                                                {% if category.id == product.category_id: %}
+                                                <option value="{{category.id}}" selected>{{category.name}}</option>
+                                                {% else %}
+                                                <option value="{{category.id}}">{{category.name}}</option>
+                                                {% endif %}
+                                                {% endfor %}
+                                            </select>
+                                            <label for="price">Image</label>
+                                            <br>
+                                            <img src="{{url_for('static', filename='assets/'+product.pic)}}" style="width: 200px;">
+                                            <div class="custom-file" style="margin-bottom: 25px; margin-top: 15px;">
+                                            <input type="file" class="custom-file-input" id="pic-{{product.id}}" name="pic" accept=".png, .jpg, .jpeg" onchange="document.getElementById('label_pic_{{product.id}}').innerHTML = [...document.getElementById('pic-{{product.id}}').files].map(file => file.name).join(',');" multiple>
+                                            <label class="custom-file-label" for="pic" id="label_pic_{{product.id}}">Choisissez un fichier</label>
+                                            </div>
+                                            <br>
+                                            <button type="submit" class="btn btn-primary">Modifier</button>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="modal fade" id="deleteModal-{{ product.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <!-- Contenu du message de confirmation de suppression -->
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="deleteModalLabel">Confirmation de Suppression</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Êtes-vous sûr de vouloir supprimer ce produit ?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                                        <button type="button" class="btn btn-danger" onclick="window.location='/delete_product/{{ product.id }}'">Supprimer</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#addModal">Ajouter un produit</button>
+            <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <!-- Contenu du formulaire de modification -->
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteModalLabel">Nouveau produit</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="/add_product" method="post" enctype="multipart/form-data">
+                                <label for="name">Nom</label>
+                                <input type="text" class="form-control" id="name" name="name">
+                                <label for="description">Description</label>
+                                <input type="text" class="form-control" id="description" name="description">
+                                <label for="qte">Quantité</label>
+                                <input type="text" class="form-control" id="qte" name="qte">
+                                <label for="price">Prix</label>
+                                <input type="text" class="form-control" id="price" name="price">
+                                <label for="category">Catégorie</label><br>
+                                <select class="custom-select mr-sm-2" id="inlineFormCustomSelect" name="category">
+                                    <option selected>Choisissez une catégorie</option>
+                                    {% for category in CATEGORIES: %}
+                                    <option value="{{category.id}}">{{category.name}}</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="price">Image</label>
+                                <div class="custom-file" style="margin-bottom: 25px; margin-top: 5px;">
+                                <input type="file" class="custom-file-input" id="pic-add" name="pic" accept=".png, .jpg, .jpeg" onchange="document.getElementById('label_pic_add').innerHTML = [...document.getElementById('pic-add').files].map(file => file.name).join(',');" multiple>
+                                <label class="custom-file-label" for="pic" id="label_pic_add">Choisissez un fichier</label>
+                                </div>
+                                <br>
+                                <button type="submit" class="btn btn-primary">Ajouter</button>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% include "footer.html" %}
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    </body>
+</html>

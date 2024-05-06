@@ -1,0 +1,52 @@
+<script src="https://kit.fontawesome.com/084b0b81ca.js" crossorigin="anonymous"></script>
+
+<nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="/"><img src="{{url_for('static', filename='assets/logo.png')}}" alt="" style="width: 30px; height: 30px;"></a>
+  
+    <div class="navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+
+        {% if current_user.is_authenticated %}
+
+        <div class="btn-group">
+            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Mon compte {% if not current_user.totp_secret: %} <span class="badge badge-pill badge-warning">!</span>{% endif %}
+            </button>
+            <div class="dropdown-menu">
+            <a class="dropdown-item" href="/account" style="color: black;"><i class="fa-solid fa-user"></i>&emsp;Mon compte {% if not current_user.totp_secret: %} <span class="badge badge-pill badge-warning">!</span>{% endif %}</a>
+            <a class="dropdown-item" href="/cart" style="color: black;"><i class="fa-solid fa-cart-shopping"></i>&emsp;Panier</a>
+            {% if current_user.admin == 1: %}
+            <a class="dropdown-item" href="/backoffice" style="color: black;"><i class="fa-solid fa-hammer"></i>&emsp;Admin</a>
+            {% endif %}
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="/logout" style="color: red;"><i class="fa-solid fa-right-from-bracket"></i>&emsp;Déconnexion</a>
+            </div>
+        </div>
+
+        {% else %}
+
+        <li class="nav-item active">
+          <a class="nav-link" href="/login">Se connecter <span class="sr-only">(current)</span></a>
+        </li>
+
+        {% endif %}
+
+      </ul>
+      <form class="form-inline my-2 my-lg-0" action="/search" method="post">
+        <input class="form-control mr-sm-2" type="search" placeholder="Recherchez un produit" name="search" id="search" aria-label="Search">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Rechercher</button>
+      </form>
+    </div>
+</nav>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container" style="margin-top: 0;">
+    <ul class="navbar-nav mx-auto">
+      {% for category in CATEGORIES: %}
+      <li class="nav-item">
+        <a class="nav-link" href="/category/{{category.id}}">{{category.name}}</a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</nav>

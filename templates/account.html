@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='style.css') }}"
+        />
+        <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='assets/logo.png') }}">
+        <title>Silkroad</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    </head>
+    <body>
+        {% include "navbar.html" %}
+        <div class="container mt-5">
+            <div class="card">
+                <div class="card-header">
+                    <h1 class="text-center">Mon Compte</h1>
+                </div>
+                <div class="card-body">
+                    <div class="user-info">
+                        <h2>Informations Personnelles</h2>
+                        <p class="mb-2"><strong>Nom:</strong> {{ current_user.name }}</p>
+                        <p class="mb-2"><strong>Email:</strong> {{ current_user.mail }}</p>
+                        {% if not current_user.totp_secret: %}
+                            <div class="alert alert-danger" role="alert">
+                               <p style="font-weight: bold;">Attention ! </p>L'authentification à multi-facteurs n'est pas activée sur votre compte. 
+                            </div>
+                            <a href="{{url_for('add_totp')}}">
+                            <button type="button" class="btn btn-danger">Ajouter l'authentification à 2 facteurs</button>
+                            </a>
+                        {% else %}
+                            <div class="alert alert-success" role="alert">
+                                L'authentification à multi-facteurs est active. 
+                            </div>
+                        {% endif %}
+                    </div>
+                    <hr>
+                    <div class="user-orders">
+                        <h2>Commandes</h2>
+                        <ul class="list-group">
+                            {% for order in orders: %}
+                            <li class="list-group-item">
+                                <strong>Commande #{{ order.id }}</strong>
+                                <p class="mb-2"><strong>Date:</strong> {{ order.date }}</p>
+                                <p class="mb-2"><strong>Total: $</strong> {{ order.price }}</p>
+                                {% if order.status == 'ended' %}
+                                    <div class="alert alert-success" role="alert">Commande terminée</div>
+                                {% elif order.status == 'error' %}
+                                    <div class="alert alert-danger" role="alert">Commande annulée</div>
+                                {% elif order.status == 'pending' %}
+                                    <div class="alert alert-warning" role="alert">Commande en cours de traitement</div>                            
+                                {% endif %}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% include "footer.html" %}
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    </body>
+</html>

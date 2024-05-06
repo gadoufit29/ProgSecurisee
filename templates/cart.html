@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='style.css') }}"
+        />
+        <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='assets/logo.png') }}">
+        <title>Silkroad</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    </head>
+    <body>
+        {% include "navbar.html" %}
+        <div class="container mt-5">
+            <div class="card">
+                <div class="card-header">
+                    <h1 class="text-center">Mon Panier</h1>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Produit</th>
+                                <th scope="col">Quantité</th>
+                                <th scope="col">Prix unitaire</th>
+                                <th scope="col">Total</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            {% for product in products: %}
+                                <tr>
+                                    <td> {{ product.name }} </td>
+                                    <td>1</td>
+                                    <td> ${{ product.price }} </td>
+                                    <td> ${{ product.price }} </td>
+                                    <td><button class="btn btn-danger" onclick="window.location='/remove_from_cart/{{product.id}}'"><i class="fa-solid fa-trash"></i></button></td>
+                                </tr>
+                            {% endfor %}
+                        
+                        </tbody>
+                    </table>
+                    <div class="text-right">
+                        <p><strong>Total du Panier:</strong> ${{ total }}</p>
+                        <button class="btn btn-primary" onclick="window.location='/buy'">Passer la Commande</button>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="card">
+                <div class="card-header">
+                    <h1 class="text-center">Ma liste d'envie</h1>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Produit</th>
+                                <th scope="col">Prix unitaire</th>
+                                <th scope="col"></th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            {% for product in products_wishlist: %}
+                                <tr>
+                                    <td> {{ product.name }} </td>
+                                    <td> ${{ product.price }} </td>
+                                    <td><button class="btn btn-danger" onclick="window.location='/remove_from_wl/{{product.id}}'">Supprimer</button></td>
+                                </tr>
+                            {% endfor %}
+                        
+                        </tbody>
+                    </table>
+                    <div class="text-right">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% include "footer.html" %}
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    </body>
+</html>

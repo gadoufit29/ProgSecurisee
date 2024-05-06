@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='style.css') }}"
+        />
+        <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='assets/logo.png') }}">
+        <title>Silkroad</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    </head>
+    <body>
+        {% include "navbar.html" %}
+        <div class="container">
+
+            {% if current_user.is_authenticated %}
+                <p> Vous etes deja connecté </p>
+            {% else %}
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <form class="mt-5" action="/login" method="post">
+                        <h2 class="text-center mb-4">Connexion</h2>
+                        <div class="form-group">
+                            <label for="username">Nom d'utilisateur</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Mot de passe</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        {% if error: %}
+                            {% if locked: %}
+                            <div class="alert alert-danger" role="alert">Mot de passe ou nom d'utilisateur incorrect. Votre compte est bloqué pendant {{ time_remaining }} minutes</div>
+                            {% else: %}
+                            <div class="alert alert-danger" role="alert">Mot de passe ou nom d'utilisateur incorrect. {{ attemps }} essais restant</div>
+                            {% endif %}
+                        {% endif %}
+
+                        {% if error_no_account: %}
+                            <div class="alert alert-danger" role="alert">Mot de passe ou nom d'utilisateur incorrect</div>
+                        {% endif %}
+                        <p style="color: gray; text-align: center;">Mot de passe oublié ? <a href="/forgot_password" style="color: grey; text-decoration: underline;">Réinitialiser mon mot de passe</a></p>
+                        <button type="submit" class="btn btn-primary btn-block" {% if locked: %} disabled {% endif %} >Se connecter</button>
+                        <button type="button" class="btn btn-info btn-block" onclick="window.location='/register'">Créer un compte</button>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% include "footer.html" %}
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    </body>
+</html>

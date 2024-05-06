@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='style.css') }}"
+        />
+        <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='assets/logo.png') }}">
+        <title>Silkroad</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script src="https://kit.fontawesome.com/084b0b81ca.js" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        {% include "navbar.html" %}
+        
+        {% if success:%}
+        <div class="alert alert-success alert-dismissible fade show" role="alert" id="alert">
+            <strong>Parfait !</strong> Votre produit a été ajouté à votre panier.
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        {% endif %}
+
+        <div class="container">
+            <h1>Détails du Produit - {{ product.name }}</h1>
+            <div class="product-details">
+                <div class="container">
+                    <div class="row">
+                      <div class="col-md-6" style="padding: 0; width: 450px; height: 450px; object-fit: contain;">
+                        <!-- Image principale -->
+                        <img src="{{url_for('static', filename='assets/'+product.pic)}}" class="img-fluid" id="main-img" alt="Image Principale du Produit" style="width: 100%; height: 100%;">
+                      </div>
+                      <div class="col-md-6">
+                        <!-- Images supplémentaires -->
+                        <div class="col" style="padding: 0;">
+                            <div class="col-6 mb-3">
+                                <img src="{{url_for('static', filename='assets/'+product.pic)}}" class="img-fluid" alt="Image Supplémentaire 1" style="width: 50px; height: 50px;" onmouseover="document.getElementById('main-img').src = this.src">
+                              </div>
+                            {% for pic in supp_pic: %}
+                          <div class="col-6 mb-3">
+                            <img src="{{url_for('static', filename='assets/'+pic)}}" class="img-fluid" alt="Image Supplémentaire 1" style="width: 50px; height: 50px;" onmouseover="document.getElementById('main-img').src = this.src">
+                          </div>
+                            {% endfor %}
+                          <!-- Ajoutez plus d'images supplémentaires ici si nécessaire -->
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                <h3>{{ product.name }}</h3>
+                <p>Prix : ${{ product.price }} </p>
+                <p>Stock restant : {{ product.qte }} </p>
+                <p>Description : {{ product.description }}</p>
+                <button type="button" class="btn btn-success" onclick="window.location='/add_to_cart/{{ product.id }}'">Ajouter au panier</button>
+                <button type="button" class="btn btn-outline-info" onclick="window.location='/add_to_wl/{{ product.id }}'">Ajouter à la liste d'envie</button>
+                <hr>
+                <h2>Commentaire</h2>
+                <div class="comment-section">
+                    {% for comment in comments %}
+                        {% if comment.user_id == current_user.id: %}
+                            <div class="comment" id="{{comment.id}}">
+                                <div class="comment-content">
+                                    <p><strong>{{ comment.user_name }}</strong> : <span class="comment-text">{{ comment.content }}</span></p>
+                                    <textarea rows="4" cols="50" class="comment-edit" style="display:none;">{{ comment.content }}</textarea>
+                                </div>
+                                <div class="comment-buttons">
+                                    <button type="button" class="btn btn-outline-dark" onclick="editComment(this)"><i class="fa fa-edit"></i></button>
+                                    <button type="button" class="btn btn-outline-danger" onclick="window.location='/delete_comment/{{ comment.id }}'"><i class="fa fa-trash"></i></button>
+                                </div>
+                            </div>
+
+                        {% elif current_user.admin == 1: %}
+                            <div class="comment">
+                                <div class="comment-content">
+                                    <p><strong>{{ comment.user_name }}</strong> : {{ comment.content }}</p>
+                                </div>
+                                <div class="comment-buttons">
+                                    <button type="button" class="btn btn-outline-danger" onclick="window.location='/delete_comment/{{ comment.id }}'"><i class="fa fa-trash"></i></button>
+                                </div>
+                            </div>
+
+                        {% else: %}
+                            <div class="comment">
+                                <p><strong>{{ comment.user_name }}</strong> : {{ comment.content }}</p>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <hr>
+                <div class="add-comment">
+                    <form action="/add_comment/{{ product.id }}" method="post" class="comment-form">
+                        <textarea rows="4" cols="50" name="content" placeholder="Commentez ce produit !"></textarea>
+                        <button type="submit" class="btn btn-primary">Ajouter le commentaire</button>
+                    </form>
+                </div>
+                <br>
+            </div>
+        </div>
+        {% include "footer.html" %}
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        <script src="{{url_for('static', filename='script.js')}}"></script>
+    </body>
+</html>
