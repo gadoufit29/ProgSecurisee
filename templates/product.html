@@ -10,7 +10,9 @@
         <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='assets/logo.png') }}">
         <title>Silkroad</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-        <script src="https://kit.fontawesome.com/084b0b81ca.js" crossorigin="anonymous"></script>
+        <script src="https://kit.fontawesome.com/084b0b81ca.js"
+                integrity="sha384-h8/32HF43rfZUAuLOPbCMMsWljRTV+ZoLHenJhQksLl06KNtxYBmeu9SeRM6v71+"
+                crossorigin="anonymous"></script>
     </head>
     <body>
         {% include "navbar.html" %}
@@ -31,17 +33,17 @@
                     <div class="row">
                       <div class="col-md-6" style="padding: 0; width: 450px; height: 450px; object-fit: contain;">
                         <!-- Image principale -->
-                        <img src="{{url_for('static', filename='assets/'+product.pic)}}" class="img-fluid" id="main-img" alt="Image Principale du Produit" style="width: 100%; height: 100%;">
+                        <img src="{{url_for('static', filename='assets/'+product.pic)}}" class="img-fluid" id="main-img" alt="Representation Principale du Produit" style="width: 100%; height: 100%;">
                       </div>
                       <div class="col-md-6">
                         <!-- Images supplémentaires -->
                         <div class="col" style="padding: 0;">
                             <div class="col-6 mb-3">
-                                <img src="{{url_for('static', filename='assets/'+product.pic)}}" class="img-fluid" alt="Image Supplémentaire 1" style="width: 50px; height: 50px;" onmouseover="document.getElementById('main-img').src = this.src">
+                                <img src="{{url_for('static', filename='assets/'+product.pic)}}" class="img-fluid" alt="Representation Produit Supplémentaire 1" style="width: 50px; height: 50px;" onmouseover="document.getElementById('main-img').src = this.src">
                               </div>
                             {% for pic in supp_pic: %}
                           <div class="col-6 mb-3">
-                            <img src="{{url_for('static', filename='assets/'+pic)}}" class="img-fluid" alt="Image Supplémentaire 1" style="width: 50px; height: 50px;" onmouseover="document.getElementById('main-img').src = this.src">
+                            <img src="{{url_for('static', filename='assets/'+pic)}}" class="img-fluid" alt="Representation Produit Supplémentaire 1" style="width: 50px; height: 50px;" onmouseover="document.getElementById('main-img').src = this.src">
                           </div>
                             {% endfor %}
                           <!-- Ajoutez plus d'images supplémentaires ici si nécessaire -->
@@ -93,6 +95,7 @@
                     <form action="/add_comment/{{ product.id }}" method="post" class="comment-form">
                         <textarea rows="4" cols="50" name="content" placeholder="Commentez ce produit !"></textarea>
                         <button type="submit" class="btn btn-primary">Ajouter le commentaire</button>
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     </form>
                 </div>
                 <br>

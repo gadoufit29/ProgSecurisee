@@ -5,23 +5,29 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 import json
 from datetime import datetime
 import random
+import secrets
 import string
 import hashlib
 import math
 import pyqrcode
+from flask_wtf.csrf import CSRFProtect, validate_csrf
 from io import BytesIO
 
-
-mysql_user = "root"
-mysql_password = ""
+user = os.environ['MYSQL_USER']
+password = os.environ['MYSQL_PASSWORD']
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://'+mysql_user+':'+mysql_password+'@127.0.0.1:3306/flaskapp'
+app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql://{user}:{password}@127.0.0.1:3306/flaskapp"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = base64.b32encode(os.urandom(25)).decode('utf-8')
+csrf = CSRFProtect()
+csrf.init_app(app)
 db.init_app(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
+login_page = 'login.html'
+index_page = 'index.html'
+assets_location = 'static/assets/'
 
 signatures = []
 
@@ -46,7 +52,7 @@ def login():
         user = Users.query.filter_by(name=username).first()
 
         if user is None:
-            return render_template('login.html', error_no_account=True, attemps=0)
+            return render_template(login_page, error_no_account=True, attemps=0)
 
         if user.last_attemp is not None:
             print(datetime.now())
@@ -55,7 +61,7 @@ def login():
             time_remaining = int(math.exp(user.locked_counter)) - int(delta_time.seconds / 60)
             print(time_remaining)
             if time_remaining > 0:
-                return render_template('login.html', error=True, attemps=0, time_remaining=time_remaining, locked=True)
+                return render_template(login_page, error=True, attemps=0, time_remaining=time_remaining, locked=True)
 
         if user.check_password(password):
             user.attemp_counter = 0
@@ -78,10 +84,10 @@ def login():
                 user.locked_counter += 1
                 user.last_attemp = datetime.now()
                 db.session.commit()
-                return render_template('login.html', error=True, attemps=0, time_remaining=int(math.exp(user.locked_counter)) - int((datetime.now() - user.last_attemp).seconds / 60), locked=True)
+                return render_template(login_page, error=True, attemps=0, time_remaining=int(math.exp(user.locked_counter)) - int((datetime.now() - user.last_attemp).seconds / 60), locked=True)
             db.session.commit()
-            return render_template('login.html', error=True, attemps=3-user.attemp_counter)
-    return render_template('login.html')
+            return render_template(login_page, error=True, attemps=3-user.attemp_counter)
+    return render_template(login_page)
 
 @app.route('/totp/<username>', methods=['GET', 'POST'])
 def totp(username):
@@ -113,12 +119,12 @@ def logout():
 @app.route('/')
 def index():
     all_products = Products.query.all()
-    return render_template('index.html', all_products=all_products, id=0)
+    return render_template(index_page, all_products=all_products, id=0)
 
 @app.route('/category/<int:id>')
 def category(id):
     all_products = Products.query.filter_by(category_id=id).all()
-    return render_template('index.html', all_products=all_products, id=id)
+    return render_template(index_page, all_products=all_products, id=id)
 
 @app.route('/product/<int:id>')
 def product(id):
@@ -143,7 +149,7 @@ def search():
             if prod not in products:
                 products.append(prod)
 
-        return render_template('index.html', all_products=products, id=-1)
+        return render_template(index_page, all_products=products, id=-1)
     else:
         return redirect(url_for('index'))
 
@@ -181,7 +187,7 @@ def cart():
         product = Products.query.get(product_id)
         if product is not None:
             products_wishlist.append(product)
-    
+
     return render_template('cart.html', products=products, total=str(round(total, 2)), products_wishlist=products_wishlist)
 
 @app.route('/add_to_cart/<int:product_id>')
@@ -193,7 +199,7 @@ def add_to_cart(product_id):
     print(type(cart))
     cart.append(product_id)
     user.cart = json.dumps(cart)
-    db.session.commit()  
+    db.session.commit()
 
     product = Products.query.get(product_id)
     if product is None:
@@ -251,7 +257,7 @@ def buy():
     user.cart = json.dumps([])
     db.session.commit()
     return redirect(url_for('account'))
-    
+
 @app.route('/register' , methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -300,16 +306,16 @@ def modify_product(id):
         if 'pic' in request.files and request.files['pic'].filename != '':
             pic = request.files.getlist('pic')
             extension = pic[0].filename.split('.')[-1]
-            pic[0].filename = str(''.join(random.choices(string.ascii_uppercase + string.digits, k=6)))+'.'+extension
-            pic[0].save('static/assets/'+pic[0].filename)
+            pic[0].filename = str(''.join(secrets.choice(string.ascii_uppercase + string.digits) for _ in range(6)))+'.'+extension
+            pic[0].save(assets_location+pic[0].filename)
             product.pic = pic[0].filename
 
             if len(pic) > 1:
                 supp_pics = []
                 for i in range(1, len(pic)):
                     extension = pic[i].filename.split('.')[-1]
-                    pic[i].filename = str(''.join(random.choices(string.ascii_uppercase + string.digits, k=6)))+'.'+extension
-                    pic[i].save('static/assets/'+pic[i].filename)
+                    pic[i].filename = str(''.join(secrets.choice(string.ascii_uppercase + string.digits) for _ in range(6)))+'.'+extension
+                    pic[i].save(assets_location+pic[i].filename)
                     supp_pics.append(pic[i].filename)
                 product.supp_pic = json.dumps(supp_pics)
 
@@ -339,19 +345,19 @@ def add_product():
         price = request.form['price']
         description = request.form['description']
         qte = request.form['qte']
-        pic = request.files.getlist("pic") 
+        pic = request.files.getlist("pic")
         category_id = request.form['category']
         extension = pic[0].filename.split('.')[-1]
-        pic[0].filename = str(''.join(random.choices(string.ascii_uppercase + string.digits, k=6)))+'.'+extension
-        pic[0].save('static/assets/'+pic[0].filename)
+        pic[0].filename = str(''.join(secrets.choice(string.ascii_uppercase + string.digits) for _ in range(6))) + '.' + extension
+        pic[0].save(assets_location+pic[0].filename)
         product = Products(name=name, price=price, description=description, qte=qte, pic=pic[0].filename, category_id=category_id)
 
         if len(pic) > 1:
             supp_pics = []
             for i in range(1, len(pic)):
                 extension = pic[i].filename.split('.')[-1]
-                pic[i].filename = str(''.join(random.choices(string.ascii_uppercase + string.digits, k=6)))+'.'+extension
-                pic[i].save('static/assets/'+pic[i].filename)
+                pic[i].filename = str(''.join(secrets.choice(string.ascii_uppercase + string.digits) for _ in range(6)))+'.'+extension
+                pic[i].save(assets_location+pic[i].filename)
                 supp_pics.append(pic[i].filename)
             product.supp_pic = json.dumps(supp_pics)
 
@@ -374,6 +380,7 @@ def delete_comment(id):
     return redirect(url_for('product', id=comment.product_id))
 
 @app.route('/modify_comment/<int:id>', methods=['POST'])
+@csrf.exempt
 @login_required
 def modify_comment(id):
     comment = Comments.query.get(id)
@@ -392,7 +399,7 @@ def qr_code():
     user = Users.query.filter_by(name=username).first()
     if user is None:
         return(redirect(url_for('login')))
-    
+
     url = pyqrcode.create(user.get_totp_uri())
     stream = BytesIO()
     url.svg(stream, scale=5)
@@ -424,4 +431,4 @@ def page_not_found(e):
     return render_template('404.html'), 404
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)

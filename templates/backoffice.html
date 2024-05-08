@@ -20,7 +20,7 @@
 
         <div class="container mt-5">
             <h2 class="mb-4">Liste des Produits</h2>
-            <table class="table">
+            <table class="table" aria-describedby="liste_produits">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -75,11 +75,12 @@
                                             </select>
                                             <label for="price">Image</label>
                                             <br>
-                                            <img src="{{url_for('static', filename='assets/'+product.pic)}}" style="width: 200px;">
+                                            <img alt="produit" src="{{url_for('static', filename='assets/'+product.pic)}}" style="width: 200px;">
                                             <div class="custom-file" style="margin-bottom: 25px; margin-top: 15px;">
                                             <input type="file" class="custom-file-input" id="pic-{{product.id}}" name="pic" accept=".png, .jpg, .jpeg" onchange="document.getElementById('label_pic_{{product.id}}').innerHTML = [...document.getElementById('pic-{{product.id}}').files].map(file => file.name).join(',');" multiple>
                                             <label class="custom-file-label" for="pic" id="label_pic_{{product.id}}">Choisissez un fichier</label>
                                             </div>
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                             <br>
                                             <button type="submit" class="btn btn-primary">Modifier</button>
                                         </form>
@@ -147,6 +148,7 @@
                                 <input type="file" class="custom-file-input" id="pic-add" name="pic" accept=".png, .jpg, .jpeg" onchange="document.getElementById('label_pic_add').innerHTML = [...document.getElementById('pic-add').files].map(file => file.name).join(',');" multiple>
                                 <label class="custom-file-label" for="pic" id="label_pic_add">Choisissez un fichier</label>
                                 </div>
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                 <br>
                                 <button type="submit" class="btn btn-primary">Ajouter</button>
                             </form>

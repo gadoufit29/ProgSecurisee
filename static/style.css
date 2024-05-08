@@ -18,7 +18,7 @@ nav {
 
 .container {
     width: 80%;
-    margin: 0 auto;
+    margin: 20px auto 0;
 }
 
 .logo {
@@ -36,10 +36,6 @@ nav {
     text-decoration: none;
     color: white;
     padding: 10px;
-}
-
-.container {
-    margin-top: 20px;
 }
 
 /* Index.html */
@@ -103,14 +99,11 @@ nav {
     padding: 10px;
     border-radius: 5px;
     margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
 }
 
 .search-bar {
     margin-top: 20px;
     width: 80%;
-}
-
-.comment{
-    display: flex;
-    justify-content: space-between;
 }

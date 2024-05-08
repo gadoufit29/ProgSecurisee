@@ -35,7 +35,7 @@
                 {% for product in all_products %}
                     <div class="card" style="width: 18rem; margin-bottom: 25px;">
                         <a href="{{ url_for('product', id=product.id) }}">
-                            <img src="{{ url_for('static', filename='assets/'+product.pic) }}" class="card-img-top" style="height: 200px; object-fit: contain;">
+                            <img alt="product" src="{{ url_for('static', filename='assets/'+product.pic) }}" class="card-img-top" style="height: 200px; object-fit: contain;">
                         </a>
                         <div class="card-body">
                           <h5 class="card-title">{{ product.name }}</h5>

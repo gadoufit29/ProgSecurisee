@@ -1,7 +1,7 @@
 function editComment(button) {
-    var commentDiv = button.closest('.comment');
-    var commentText = commentDiv.querySelector('.comment-text');
-    var commentEdit = commentDiv.querySelector('.comment-edit');
+    let commentDiv = button.closest('.comment');
+    let commentText = commentDiv.querySelector('.comment-text');
+    let commentEdit = commentDiv.querySelector('.comment-edit');
 
     commentText.style.display = 'none';
     commentEdit.style.display = 'block';
@@ -16,21 +16,20 @@ function editComment(button) {
 }
 
 function saveComment(button) {
-    var commentDiv = button.closest('.comment');
-    var commentText = commentDiv.querySelector('.comment-text');
-    var commentEdit = commentDiv.querySelector('.comment-edit');
+    let commentDiv = button.closest('.comment');
+    let commentEdit = commentDiv.querySelector('.comment-edit');
 
     // Send post request to save the comment
-    var commentId = commentDiv.getAttribute('id');
-    var comment = commentEdit.value;
-    var data = {
+    let commentId = commentDiv.getAttribute('id');
+    let comment = commentEdit.value;
+    let data = {
         comment: comment
     };
     console.log(data);
     console.log(commentId);
 
-    var url = '/modify_comment/' + commentId;
-    var request = new XMLHttpRequest();
+    let url = '/modify_comment/' + commentId;
+    let request = new XMLHttpRequest();
     request.open('POST', url, true);
 
     // Set the content type of the request

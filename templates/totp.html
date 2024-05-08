@@ -22,6 +22,9 @@
                             <label for="username">Token</label>
                             <input type="text" class="form-control" id="token" name="token" required>
                         </div>
+                        <div class="form-group">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        </div>
                         {% if error: %}
                             <div class="alert alert-danger" role="alert">Token invalide</div>
                         {% endif %}
