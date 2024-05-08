@@ -66,7 +66,9 @@ Félicitations ! Votre base de données contient désormais toutes les tables n�
 
 Dernière étape avant de lancer le projet, il faut définir vos variables d'envrionnement.
 
-Si vous posséder déja mysql sur votre pc, vos variables d'environnement seront trouvées automatiquement, sinon il vous faut installer le module **mysqlclient**
+Si vous posséder déja mysql sur votre pc, vos variables d'environnement seront trouvées automatiquement, vous pouvez donc passer cette partie. 
+
+Sinon il vous faut installer le module **mysqlclient**
 
 Une fois cela fait, rendez-vous dans votre fichier de configuration (sur mac ce sera ~/.zshrc), aller à la fin du fichier et rajoutez :
 
