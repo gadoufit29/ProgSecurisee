@@ -53,7 +53,7 @@ Votre base de données est désormais créée
 
 <img width="567" alt="SCR-20240508-tdnk" src="https://github.com/gadoufit29/ProgSecurisee/assets/76166929/8cdce5ce-7b1a-414c-add2-a2bc479013ec">
 
-4. Sélectionner le fichier *boutiqueprojet.sql* situé dans la racine du projet *ProgSecurisee*
+4. Sélectionner le fichier *boutiqueproject.sql* situé dans la racine du projet *ProgSecurisee*
 
 <img width="264" alt="SCR-20240508-tejo" src="https://github.com/gadoufit29/ProgSecurisee/assets/76166929/74671ffe-b349-4dd3-9f7b-8f2b8be09f9e">
 
