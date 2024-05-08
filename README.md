@@ -74,7 +74,6 @@ Vous avez désormais accès au site et à toutes les fonctionnalités dont il di
 > Vous pouvez vous créer un compte, vous serait simple utilisateur
 > Si vous souhaitez être admin, voici votre pair
 > *username:password* --> **B3stadmin:Strong3stPassw0rd**
-> (cette paire a été générée avec ChatGPT, je n'ai rien à voir avec cette blague)
 
 
 
