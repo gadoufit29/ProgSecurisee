@@ -73,7 +73,6 @@ Une fois cela fait, rendez-vous dans votre fichier de configuration (sur mac ce 
 ```
 export MYSQL_USER=root
 export MYSQL_PASSWORD=
-
 ```
 
 Ces identifiants sont ceux par défaut de MySQL
