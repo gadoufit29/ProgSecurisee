@@ -12,6 +12,7 @@ Pour ce faire il vous faudra l'outil **pip**
 
 1. Se rendre dans la racine du projet (dans le dossier ProgSecurisee) via votre terminal
 2. Exécutez la commande : `pip install -r requirements.txt`
+3. Entrez ensuite : `source venv/bin/activate` 
 
 Et voila, les dépendances sont installés !
 
@@ -60,6 +61,25 @@ Votre base de données est désormais créée
 5. Descendez tout en bas et cliquez sur **Importer**
 
 Félicitations ! Votre base de données contient désormais toutes les tables nécessaires au bon fonctionnement du site !
+
+## Variables d'envrionnement
+
+Dernière étape avant de lancer le projet, il faut définir vos variables d'envrionnement.
+
+Si vous posséder déja mysql sur votre pc, vos variables d'environnement seront trouvées automatiquement, sinon il vous faut installer le module **mysqlclient**
+
+Une fois cela fait, rendez-vous dans votre fichier de configuration (sur mac ce sera ~/.zshrc), aller à la fin du fichier et rajoutez :
+
+```
+export MYSQL_USER=root
+export MYSQL_PASSWORD=
+
+```
+
+Ces identifiants sont ceux par défaut de MySQL
+
+Entrez ensuite la commande `source ~/.zshrc`
+
 
 ## Lancement du site 
 
